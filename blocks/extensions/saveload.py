@@ -51,7 +51,7 @@ class Checkpoint(SimpleExtension):
 
 
     """
-    def __init__(self, path, save_separately=None, use_cpickle=False,
+    def __init__(self, path, save_separately=None, use_cpickle=False, no_mainloop=False,
                  **kwargs):
         kwargs.setdefault("after_training", True)
         super(Checkpoint, self).__init__(**kwargs)
@@ -60,6 +60,8 @@ class Checkpoint(SimpleExtension):
         self.path = path
         self.save_separately = save_separately
         self.use_cpickle = use_cpickle
+        # amjads modif
+        self.no_mainloop = no_mainloop
 
     def save_separately_filenames(self, path):
         """Compute paths for separately saved attributes.
@@ -93,7 +95,8 @@ class Checkpoint(SimpleExtension):
             path = self.path
             if from_user:
                 path, = from_user
-            secure_dump(self.main_loop, path, use_cpickle=self.use_cpickle)
+            if not self.no_mainloop:
+                secure_dump(self.main_loop, path, use_cpickle=self.use_cpickle)
             filenames = self.save_separately_filenames(path)
             for attribute in self.save_separately:
                 secure_dump(getattr(self.main_loop, attribute),
