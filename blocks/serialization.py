@@ -218,6 +218,8 @@ def continue_training(path):
     with change_recursion_limit(config.recursion_limit):
         with open(path, "rb") as f:
             main_loop = load(f)
+    if 'training_finish_requested' in main_loop.log.current_row:
+        return
     main_loop.run()
 
 
